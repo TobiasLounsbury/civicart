@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<extension key="com.tobiaslounsbury.shoppingcart" type="module">
+  <file>shoppingcart</file>
+  <name>CiviCRM Shopping Cart</name>
+  <description>Creates a session based shopping cart and associated tools for including "Add To Cart" buttons to CiviCRM and CMS pages</description>
+  <license>AGPL-3.0</license>
+  <maintainer>
+    <author>Tobias Lounsbury</author>
+    <email>tobiaslounsbury@gmail.com</email>
+  </maintainer>
+  <urls>
+    <url desc="Main Extension Page">https://github.com/TobiasLounsbury/civicrm-shoppingcart</url>
+    <url desc="Documentation">https://github.com/TobiasLounsbury/civicrm-shoppingcart</url>
+    <url desc="Support">https://github.com/TobiasLounsbury/civicrm-shoppingcart/issues</url>
+    <url desc="Licensing">http://www.gnu.org/licenses/agpl-3.0.html</url>
+  </urls>
+  <releaseDate>2017-03-14</releaseDate>
+  <version>1.0</version>
+  <develStage>alpha</develStage>
+  <compatibility>
+    <ver>4.7</ver>
+  </compatibility>
+  <comments>This is a new, undeveloped module</comments>
+  <civix>
+    <namespace>CRM/Shoppingcart</namespace>
+  </civix>
+</extension>
