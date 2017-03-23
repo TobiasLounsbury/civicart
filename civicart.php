@@ -139,6 +139,59 @@ function civicart_civicrm_preProcess($formName, &$form) {
 
 
 /**
+ * Implementation of hook_civicrm_navigationMenu
+ *
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_navigationMenu
+ *
+ * Add Cart Settings link to the Administer->CiviContribute menu.
+ *
+ * @param $params
+ */
+function civicart_civicrm_navigationMenu( &$params ) {
+  // get the id of Administer Menu
+  $administerMenuId = CRM_Core_DAO::getFieldValue('CRM_Core_BAO_Navigation', 'Administer', 'id', 'name');
+  $contributeMenuId = CRM_Core_DAO::getFieldValue('CRM_Core_BAO_Navigation', 'CiviContribute', 'id', 'name');
+
+  $newKey = _civicart_getMenuKeyMax($params) + 1;
+
+  // skip adding menu if there is no administer menu
+  if ($administerMenuId && $contributeMenuId) {
+    $params[$administerMenuId]['child'][$contributeMenuId]['child'][$newKey] =  array (
+      'attributes' => array (
+        'label'      => 'CiviCart Settings',
+        'name'       => 'civicart_settings',
+        'url'        => 'civicrm/cart/settings',
+        'permission' => 'administer CiviCRM',
+        'operator'   => NULL,
+        'separator'  => false,
+        'parentID'   => $contributeMenuId,
+        'navID'      => $newKey,
+        'active'     => 1
+      )
+    );
+  }
+}
+
+/**
+ * Helper function for getting the highest key in the navigation menu.
+ *
+ * Taken from http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_navigationMenu.
+ *
+ * @param array $menuArray
+ * @return int
+ */
+function _civicart_getMenuKeyMax($menuArray) {
+  $max = array(max(array_keys($menuArray)));
+  foreach($menuArray as $v) {
+    if (!empty($v['child'])) {
+      $max[] = _civicart_getMenuKeyMax($v['child']);
+    }
+  }
+  return max($max);
+}
+
+
+/**
  * Implementation of hook_civicrm_tokens
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_tokens
