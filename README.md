@@ -4,7 +4,7 @@ This extension creates a CiviCRM session based shopping cart and provides hooks 
 
 This Extension is simplest when used with one of the CMS specific connectors. It can be used without either of these connectors but they are the simplest way to make this functionality work "out of the box"
 
-##Related Extensions
+## Related Extensions
 [CiviCart-Drupal](https://github.com/TobiasLounsbury/civicart-drupal):
 This module connects to CiviCart and creates drupal tokens for all cart items.
 
@@ -15,9 +15,9 @@ This Plugin creates a civicart shortcode that can be used in Wordpress content t
 This extension is creates the ability to add Description and Quantity restrictions for Price-Sets items. It works as a stand-alone extension but also contains hooks to interface with CiviCart.
 
 
-##Hooks
+## Hooks
 
-####alterTemplateFile
+#### alterTemplateFile
 
 ```php
 function hook_civicart_alterTemplateFile(&$item, $context, &$template);
@@ -26,7 +26,7 @@ Allows an external extension to modify which template is rendered for a given it
 `$item` is a reference to the priceset field or field value that is being rendered
 `$context` is the context that is being rendered [full, description, button]
 
-####tokenListAlter
+#### tokenListAlter
 
 ```php
 function hook_civicart_tokenListAlter(&$items);
