@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<menu>
+  <item>
+    <path>civicrm/cart/settings</path>
+    <page_callback>CRM_Civicart_Form_Settings</page_callback>
+    <title>CiviCart Settings</title>
+    <access_arguments>administer CiviCRM</access_arguments>
+  </item>
+</menu>
