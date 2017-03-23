@@ -1,14 +1,14 @@
 <?php
 
-require_once 'shoppingcart.civix.php';
+require_once 'civicart.civix.php';
 
 /**
  * Implements hook_civicrm_config().
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_config
  */
-function shoppingcart_civicrm_config(&$config) {
-  _shoppingcart_civix_civicrm_config($config);
+function civicart_civicrm_config(&$config) {
+  _civicart_civix_civicrm_config($config);
 }
 
 /**
@@ -18,8 +18,8 @@ function shoppingcart_civicrm_config(&$config) {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_xmlMenu
  */
-function shoppingcart_civicrm_xmlMenu(&$files) {
-  _shoppingcart_civix_civicrm_xmlMenu($files);
+function civicart_civicrm_xmlMenu(&$files) {
+  _civicart_civix_civicrm_xmlMenu($files);
 }
 
 /**
@@ -27,8 +27,8 @@ function shoppingcart_civicrm_xmlMenu(&$files) {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_install
  */
-function shoppingcart_civicrm_install() {
-  _shoppingcart_civix_civicrm_install();
+function civicart_civicrm_install() {
+  _civicart_civix_civicrm_install();
 }
 
 /**
@@ -36,8 +36,8 @@ function shoppingcart_civicrm_install() {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_uninstall
  */
-function shoppingcart_civicrm_uninstall() {
-  _shoppingcart_civix_civicrm_uninstall();
+function civicart_civicrm_uninstall() {
+  _civicart_civix_civicrm_uninstall();
 }
 
 /**
@@ -45,8 +45,8 @@ function shoppingcart_civicrm_uninstall() {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_enable
  */
-function shoppingcart_civicrm_enable() {
-  _shoppingcart_civix_civicrm_enable();
+function civicart_civicrm_enable() {
+  _civicart_civix_civicrm_enable();
 }
 
 /**
@@ -54,8 +54,8 @@ function shoppingcart_civicrm_enable() {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_disable
  */
-function shoppingcart_civicrm_disable() {
-  _shoppingcart_civix_civicrm_disable();
+function civicart_civicrm_disable() {
+  _civicart_civix_civicrm_disable();
 }
 
 /**
@@ -70,8 +70,8 @@ function shoppingcart_civicrm_disable() {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_upgrade
  */
-function shoppingcart_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
-  return _shoppingcart_civix_civicrm_upgrade($op, $queue);
+function civicart_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
+  return _civicart_civix_civicrm_upgrade($op, $queue);
 }
 
 /**
@@ -82,8 +82,8 @@ function shoppingcart_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_managed
  */
-function shoppingcart_civicrm_managed(&$entities) {
-  _shoppingcart_civix_civicrm_managed($entities);
+function civicart_civicrm_managed(&$entities) {
+  _civicart_civix_civicrm_managed($entities);
 }
 
 /**
@@ -95,8 +95,8 @@ function shoppingcart_civicrm_managed(&$entities) {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_caseTypes
  */
-function shoppingcart_civicrm_caseTypes(&$caseTypes) {
-  _shoppingcart_civix_civicrm_caseTypes($caseTypes);
+function civicart_civicrm_caseTypes(&$caseTypes) {
+  _civicart_civix_civicrm_caseTypes($caseTypes);
 }
 
 /**
@@ -109,8 +109,8 @@ function shoppingcart_civicrm_caseTypes(&$caseTypes) {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_caseTypes
  */
-function shoppingcart_civicrm_angularModules(&$angularModules) {
-_shoppingcart_civix_civicrm_angularModules($angularModules);
+function civicart_civicrm_angularModules(&$angularModules) {
+_civicart_civix_civicrm_angularModules($angularModules);
 }
 
 /**
@@ -118,8 +118,8 @@ _shoppingcart_civix_civicrm_angularModules($angularModules);
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_alterSettingsFolders
  */
-function shoppingcart_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
-  _shoppingcart_civix_civicrm_alterSettingsFolders($metaDataFolders);
+function civicart_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
+  _civicart_civix_civicrm_alterSettingsFolders($metaDataFolders);
 }
 
 /**
@@ -131,8 +131,40 @@ function shoppingcart_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_preProcess
  *
-function shoppingcart_civicrm_preProcess($formName, &$form) {
+function civicart_civicrm_preProcess($formName, &$form) {
 
 }
 
 */
+
+
+/**
+ * Implementation of hook_civicrm_tokens
+ *
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_tokens
+ *
+ *  Adds the shopping cart tokens to the list of available tokens.
+ *
+ * @param $tokens
+ */
+function civicart_civicrm_tokens( &$tokens ) {
+  $tokens['cart'] = CRM_Civicart_Tokens::getCartTokens();
+}
+
+
+/**
+ * Implementation of hook_civicrm_tokenValues
+ *
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_tokenValues
+ *
+ * Used to replace a token with a cart item's html either a button or a description
+ *
+ * @param $values
+ * @param $cids
+ * @param null $job
+ * @param array $tokens
+ * @param null $context
+ */
+function civicart_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = array(), $context = null) {
+
+}

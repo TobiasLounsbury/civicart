@@ -7,7 +7,7 @@
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_config
  */
-function _shoppingcart_civix_civicrm_config(&$config = NULL) {
+function _civicart_civix_civicrm_config(&$config = NULL) {
   static $configured = FALSE;
   if ($configured) {
     return;
@@ -37,8 +37,8 @@ function _shoppingcart_civix_civicrm_config(&$config = NULL) {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_xmlMenu
  */
-function _shoppingcart_civix_civicrm_xmlMenu(&$files) {
-  foreach (_shoppingcart_civix_glob(__DIR__ . '/xml/Menu/*.xml') as $file) {
+function _civicart_civix_civicrm_xmlMenu(&$files) {
+  foreach (_civicart_civix_glob(__DIR__ . '/xml/Menu/*.xml') as $file) {
     $files[] = $file;
   }
 }
@@ -48,9 +48,9 @@ function _shoppingcart_civix_civicrm_xmlMenu(&$files) {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_install
  */
-function _shoppingcart_civix_civicrm_install() {
-  _shoppingcart_civix_civicrm_config();
-  if ($upgrader = _shoppingcart_civix_upgrader()) {
+function _civicart_civix_civicrm_install() {
+  _civicart_civix_civicrm_config();
+  if ($upgrader = _civicart_civix_upgrader()) {
     $upgrader->onInstall();
   }
 }
@@ -60,9 +60,9 @@ function _shoppingcart_civix_civicrm_install() {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_uninstall
  */
-function _shoppingcart_civix_civicrm_uninstall() {
-  _shoppingcart_civix_civicrm_config();
-  if ($upgrader = _shoppingcart_civix_upgrader()) {
+function _civicart_civix_civicrm_uninstall() {
+  _civicart_civix_civicrm_config();
+  if ($upgrader = _civicart_civix_upgrader()) {
     $upgrader->onUninstall();
   }
 }
@@ -72,9 +72,9 @@ function _shoppingcart_civix_civicrm_uninstall() {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_enable
  */
-function _shoppingcart_civix_civicrm_enable() {
-  _shoppingcart_civix_civicrm_config();
-  if ($upgrader = _shoppingcart_civix_upgrader()) {
+function _civicart_civix_civicrm_enable() {
+  _civicart_civix_civicrm_config();
+  if ($upgrader = _civicart_civix_upgrader()) {
     if (is_callable(array($upgrader, 'onEnable'))) {
       $upgrader->onEnable();
     }
@@ -87,9 +87,9 @@ function _shoppingcart_civix_civicrm_enable() {
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_disable
  * @return mixed
  */
-function _shoppingcart_civix_civicrm_disable() {
-  _shoppingcart_civix_civicrm_config();
-  if ($upgrader = _shoppingcart_civix_upgrader()) {
+function _civicart_civix_civicrm_disable() {
+  _civicart_civix_civicrm_config();
+  if ($upgrader = _civicart_civix_upgrader()) {
     if (is_callable(array($upgrader, 'onDisable'))) {
       $upgrader->onDisable();
     }
@@ -107,21 +107,21 @@ function _shoppingcart_civix_civicrm_disable() {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_upgrade
  */
-function _shoppingcart_civix_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
-  if ($upgrader = _shoppingcart_civix_upgrader()) {
+function _civicart_civix_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
+  if ($upgrader = _civicart_civix_upgrader()) {
     return $upgrader->onUpgrade($op, $queue);
   }
 }
 
 /**
- * @return CRM_Shoppingcart_Upgrader
+ * @return CRM_Civicart_Upgrader
  */
-function _shoppingcart_civix_upgrader() {
-  if (!file_exists(__DIR__.'/CRM/Shoppingcart/Upgrader.php')) {
+function _civicart_civix_upgrader() {
+  if (!file_exists(__DIR__.'/CRM/Civicart/Upgrader.php')) {
     return NULL;
   }
   else {
-    return CRM_Shoppingcart_Upgrader_Base::instance();
+    return CRM_Civicart_Upgrader_Base::instance();
   }
 }
 
@@ -135,7 +135,7 @@ function _shoppingcart_civix_upgrader() {
  * @param $pattern string, glob pattern, eg "*.txt"
  * @return array(string)
  */
-function _shoppingcart_civix_find_files($dir, $pattern) {
+function _civicart_civix_find_files($dir, $pattern) {
   if (is_callable(array('CRM_Utils_File', 'findFiles'))) {
     return CRM_Utils_File::findFiles($dir, $pattern);
   }
@@ -144,7 +144,7 @@ function _shoppingcart_civix_find_files($dir, $pattern) {
   $result = array();
   while (!empty($todos)) {
     $subdir = array_shift($todos);
-    foreach (_shoppingcart_civix_glob("$subdir/$pattern") as $match) {
+    foreach (_civicart_civix_glob("$subdir/$pattern") as $match) {
       if (!is_dir($match)) {
         $result[] = $match;
       }
@@ -169,13 +169,13 @@ function _shoppingcart_civix_find_files($dir, $pattern) {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_managed
  */
-function _shoppingcart_civix_civicrm_managed(&$entities) {
-  $mgdFiles = _shoppingcart_civix_find_files(__DIR__, '*.mgd.php');
+function _civicart_civix_civicrm_managed(&$entities) {
+  $mgdFiles = _civicart_civix_find_files(__DIR__, '*.mgd.php');
   foreach ($mgdFiles as $file) {
     $es = include $file;
     foreach ($es as $e) {
       if (empty($e['module'])) {
-        $e['module'] = 'com.tobiaslounsbury.shoppingcart';
+        $e['module'] = 'com.tobiaslounsbury.civicart';
       }
       $entities[] = $e;
     }
@@ -191,12 +191,12 @@ function _shoppingcart_civix_civicrm_managed(&$entities) {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_caseTypes
  */
-function _shoppingcart_civix_civicrm_caseTypes(&$caseTypes) {
+function _civicart_civix_civicrm_caseTypes(&$caseTypes) {
   if (!is_dir(__DIR__ . '/xml/case')) {
     return;
   }
 
-  foreach (_shoppingcart_civix_glob(__DIR__ . '/xml/case/*.xml') as $file) {
+  foreach (_civicart_civix_glob(__DIR__ . '/xml/case/*.xml') as $file) {
     $name = preg_replace('/\.xml$/', '', basename($file));
     if ($name != CRM_Case_XMLProcessor::mungeCaseType($name)) {
       $errorMessage = sprintf("Case-type file name is malformed (%s vs %s)", $name, CRM_Case_XMLProcessor::mungeCaseType($name));
@@ -204,7 +204,7 @@ function _shoppingcart_civix_civicrm_caseTypes(&$caseTypes) {
       // throw new CRM_Core_Exception($errorMessage);
     }
     $caseTypes[$name] = array(
-      'module' => 'com.tobiaslounsbury.shoppingcart',
+      'module' => 'com.tobiaslounsbury.civicart',
       'name' => $name,
       'file' => $file,
     );
@@ -220,17 +220,17 @@ function _shoppingcart_civix_civicrm_caseTypes(&$caseTypes) {
 *
 * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_angularModules
 */
-function _shoppingcart_civix_civicrm_angularModules(&$angularModules) {
+function _civicart_civix_civicrm_angularModules(&$angularModules) {
   if (!is_dir(__DIR__ . '/ang')) {
     return;
   }
 
-  $files = _shoppingcart_civix_glob(__DIR__ . '/ang/*.ang.php');
+  $files = _civicart_civix_glob(__DIR__ . '/ang/*.ang.php');
   foreach ($files as $file) {
     $name = preg_replace(':\.ang\.php$:', '', basename($file));
     $module = include $file;
     if (empty($module['ext'])) {
-      $module['ext'] = 'com.tobiaslounsbury.shoppingcart';
+      $module['ext'] = 'com.tobiaslounsbury.civicart';
     }
     $angularModules[$name] = $module;
   }
@@ -248,7 +248,7 @@ function _shoppingcart_civix_civicrm_angularModules(&$angularModules) {
  * @param string $pattern
  * @return array, possibly empty
  */
-function _shoppingcart_civix_glob($pattern) {
+function _civicart_civix_glob($pattern) {
   $result = glob($pattern);
   return is_array($result) ? $result : array();
 }
@@ -261,7 +261,7 @@ function _shoppingcart_civix_glob($pattern) {
  * @param array $item - menu you need to insert (parent/child attributes will be filled for you)
  * @param int $parentId - used internally to recurse in the menu structure
  */
-function _shoppingcart_civix_insert_navigation_menu(&$menu, $path, $item, $parentId = NULL) {
+function _civicart_civix_insert_navigation_menu(&$menu, $path, $item, $parentId = NULL) {
   static $navId;
 
   // If we are done going down the path, insert menu
@@ -286,7 +286,7 @@ function _shoppingcart_civix_insert_navigation_menu(&$menu, $path, $item, $paren
     foreach ($menu as $key => &$entry) {
       if ($entry['attributes']['name'] == $first) {
         if (!$entry['child']) $entry['child'] = array();
-        $found = _shoppingcart_civix_insert_navigation_menu($entry['child'], implode('/', $path), $item, $key);
+        $found = _civicart_civix_insert_navigation_menu($entry['child'], implode('/', $path), $item, $key);
       }
     }
     return $found;
@@ -298,7 +298,7 @@ function _shoppingcart_civix_insert_navigation_menu(&$menu, $path, $item, $paren
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_alterSettingsFolders
  */
-function _shoppingcart_civix_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
+function _civicart_civix_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
   static $configured = FALSE;
   if ($configured) {
     return;
