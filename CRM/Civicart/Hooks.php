@@ -8,15 +8,14 @@ class CRM_Civicart_Hooks {
    * This hook allows other extensions to modify the
    * template that gets rendered for a given token.
    *
-   * @param $priceFieldId
-   * @param $optionId
+   * @param $item
    * @param $context
    * @param $template
    * @return mixed
    */
-  public static function TokenTemplateHook($priceFieldId, $optionId, $context, &$template) {
-    return CRM_Utils_Hook::singleton()->invoke(4, $priceFieldId, $optionId, $context, $template,
-      self::$_nullObject, self::$_nullObject,
+  public static function tokenTemplateHook(&$item, $context, &$template) {
+    return CRM_Utils_Hook::singleton()->invoke(3, $item, $context, $template,
+      self::$_nullObject, self::$_nullObject, self::$_nullObject,
       'civicart_alterTemplateFile'
     );
   }
@@ -29,7 +28,7 @@ class CRM_Civicart_Hooks {
    * @param $priceFields
    * @return mixed
    */
-  public static function TokenListHook(&$priceFields) {
+  public static function tokenListHook(&$priceFields) {
     return CRM_Utils_Hook::singleton()->invoke(1, $priceFields, self::$_nullObject,
       self::$_nullObject, self::$_nullObject, self::$_nullObject, self::$_nullObject,
       'civicart_tokenListAlter'
@@ -41,14 +40,18 @@ class CRM_Civicart_Hooks {
    * This hook allows other extensions (such as PriceSetInventory)
    * to indicate how many of this item are available.
    *
-   * @param $priceFieldId
-   * @param $option
+   * @param $item
+   * @param $context
    * @return mixed
    */
-  public static function InventoryHook($priceFieldId, $option = false) {
-    $inventory = array();
-    return CRM_Utils_Hook::singleton()->invoke(3, $priceFieldId, $option, $inventory,
-      self::$_nullObject, self::$_nullObject, self::$_nullObject,
+  public static function inventoryHook(&$item, $context = "full") {
+
+    $item['quantity'] = CRM_Utils_Array::value("quantity", $item, false);
+    $item['description'] = CRM_Utils_Array::value("description", $item, false);
+    $item['image'] = CRM_Utils_Array::value("image", $item, false);
+
+    return CRM_Utils_Hook::singleton()->invoke(2, $item, $context,
+      self::$_nullObject, self::$_nullObject, self::$_nullObject, self::$_nullObject,
       'civicart_getItemInventory'
     );
   }
