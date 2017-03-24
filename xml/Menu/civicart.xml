@@ -6,4 +6,16 @@
     <title>CiviCart Settings</title>
     <access_arguments>administer CiviCRM</access_arguments>
   </item>
+  <item>
+    <path>civicrm/cart</path>
+    <page_callback>CRM_Civicart_Form_Cart</page_callback>
+    <title>View Cart</title>
+    <access_arguments>make online contributions</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/cart/checkout</path>
+    <page_callback>CRM_Civicart_Form_Checkout</page_callback>
+    <title>Checkout</title>
+    <access_arguments>make online contributions</access_arguments>
+  </item>
 </menu>
