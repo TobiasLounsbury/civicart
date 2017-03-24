@@ -3,7 +3,6 @@
 
 class CRM_Civicart_Utils {
 
-
   /**
    * Hook to include Library Resources into a civi page.
    */
@@ -20,6 +19,8 @@ class CRM_Civicart_Utils {
     }
   }
 
+
+
   /**
    * Function to return a list of resource urls so they
    * may be added by a helper function
@@ -35,6 +36,30 @@ class CRM_Civicart_Utils {
     return $resources;
   }
 
+
+
+  /**
+   *  Function to return the count of items in the cart.
+   */
+  public static function getCartCount() {
+    if(array_key_exists("civicart_items", $_SESSION)) {
+      $items = 0;
+      foreach($_SESSION['civicart_items'] as $item) {
+        $items = $items + (array_key_exists("quantity", $item) && is_numeric($item['quantity'])) ? $item['quantity'] : 1;
+      }
+      return $items;
+    }
+    return 0;
+  }
+
+
+
+  /**
+   * Returns the URL to view the cart.
+   */
+  public static function getCartLink() {
+    return CRM_Utils_System::url("civicrm/cart");
+  }
 
 
 }
