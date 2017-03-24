@@ -35,6 +35,7 @@ class CRM_Civicart_Tokens {
 
     $priceFields = array();
 
+    //Do some normalization of the price field so other extensions can modify the data.
     foreach($result['values'] as $priceField) {
 
       $priceFields[$priceField['id']] = array(
@@ -92,9 +93,12 @@ class CRM_Civicart_Tokens {
 
     $itemValues = array();
 
+
+    //We are working with an Item
     if($type == "item") {
       //Get the PriceField
       try {
+        //Fetch the PriceField
         $priceField = civicrm_api3('PriceField', 'getsingle', array(
           'return' => array("id", "label", "name", "html_type", "is_active", "price_set_id", "is_display_amounts"),
           'id' => $itemId,
@@ -128,6 +132,7 @@ class CRM_Civicart_Tokens {
       if($priceField['html_type'] == "Text") {
         $itemValues['amount'] = $priceField['api.PriceFieldValue.get']['values'][0]['amount'];
       } else {
+        //Set the Options if we aren't working with a text field.
         $itemValues['options'] = $priceField['api.PriceFieldValue.get']['values'];
       }
 
@@ -155,6 +160,7 @@ class CRM_Civicart_Tokens {
         return "";
       }
 
+      //Do some normalization
       $itemValues['id'] = $priceFieldValue['id'];
       $itemValues['label'] = $priceFieldValue['label'];
       $itemValues['name'] = $priceFieldValue['name'];
@@ -164,6 +170,8 @@ class CRM_Civicart_Tokens {
       $itemValues['type'] = "option";
 
     } else {
+      //todo: Should we do something with a hook here that would allow other
+      //todo: Extensions to provide their own types?
       return "";
     }
 
@@ -186,10 +194,21 @@ class CRM_Civicart_Tokens {
       $template->assign($key, $value);
     }
 
+    //Assign the button text if it is needed
+    if($context == "full" || $context == "button") {
+      $buttonText = civicrm_api3('Setting', 'getvalue', array(
+        'return' => "civicart_add_button_text",
+        'name' => "civicart_add_button_text",
+      ));
+      $template->assign("buttonText", $buttonText);
+    }
+
+    //Render the Template
     $html = trim($template->fetch($templateFile));
 
 
     if($html) {
+      //Add the Library Resources if we have a fleshed out Token.
       CRM_Civicart_Utils::addLibraryResources();
     }
 
