@@ -37,6 +37,19 @@ class CRM_Civicart_Utils {
   }
 
 
+  /**
+   * Helper function to get the cart contents
+   *
+   * @return array
+   */
+  public static function getCartContents() {
+    $contents = array();
+
+
+
+    return $contents;
+  }
+
 
   /**
    *  Function to return the count of items in the cart.
