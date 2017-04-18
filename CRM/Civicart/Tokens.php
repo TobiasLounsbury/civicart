@@ -10,7 +10,7 @@ class CRM_Civicart_Tokens {
    *
    * @return array
    */
-  public static function getCartItems() {
+  public static function getAllItems() {
 
     //Lookup the setting for which price set we are to use
     $priceSetId = civicrm_api3('Setting', 'getvalue', array(
@@ -71,20 +71,14 @@ class CRM_Civicart_Tokens {
    *
    * Types:
    * * item - Renders a PriceField. This is any PriceField in the selected cart priceset
-   * And will for checkboxes render all of the options with a single add to cart button.
+   *   And will for checkboxes render all of the options with a single add to cart button.
    * * option - Used to add a single checkbox option out of the list.
-   *
-   * Available Contexts:
-   * * full - Returns both a description (if available) and an "Add to Cart" button
-   * * button - Returns an "Add to Cart" button.
-   * * descriptions - Returns the Items description if available.
    *
    * @param $itemId
    * @param string $type
-   * @param string $context
    * @return string
    */
-  public static function getItemContent($itemId, $type = "item", $context = "full") {
+  public static function getItemData($itemId, $type = "item") {
     //Lookup the setting for which price set we are to use
     $priceSetId = civicrm_api3('Setting', 'getvalue', array(
       'return' => "civicart_priceset",
@@ -95,7 +89,7 @@ class CRM_Civicart_Tokens {
 
 
     //We are working with an Item
-    if($type == "item") {
+    if ($type == "item") {
       //Get the PriceField
       try {
         //Fetch the PriceField
@@ -109,11 +103,11 @@ class CRM_Civicart_Tokens {
             'options' => array(
               'limit' => 0,
               'sort' => "weight asc",
-              ),
+            ),
           ),
         ));
 
-        if($priceField['price_set_id'] != $priceSetId ||
+        if ($priceField['price_set_id'] != $priceSetId ||
           $priceField['is_active'] == 0
         ) {
           return "";
@@ -129,7 +123,7 @@ class CRM_Civicart_Tokens {
       $itemValues['is_display_amounts'] = $priceField['is_display_amounts'];
 
       //Set the Price for text items
-      if($priceField['html_type'] == "Text") {
+      if ($priceField['html_type'] == "Text") {
         $itemValues['amount'] = $priceField['api.PriceFieldValue.get']['values'][0]['amount'];
       } else {
         //Set the Options if we aren't working with a text field.
@@ -153,7 +147,7 @@ class CRM_Civicart_Tokens {
       }
 
       //Return an empty string if this item isn't enable, or isn't part of our priceset
-      if($priceFieldValue['api.PriceField.getsingle']['price_set_id'] != $priceSetId ||
+      if ($priceFieldValue['api.PriceField.getsingle']['price_set_id'] != $priceSetId ||
         $priceFieldValue['is_active'] == 0 ||
         $priceFieldValue['api.PriceField.getsingle']['is_active'] == 0
       ) {
@@ -175,6 +169,28 @@ class CRM_Civicart_Tokens {
       return "";
     }
 
+    //Allow other extensions to load additional data into the item
+    //Such as Quantity and Description.
+    CRM_Civicart_Hooks::inventoryHook($itemValues, $type);
+
+    return $itemValues;
+  }
+
+  
+  /**
+   * Renders an Item for a given context.
+   *
+   * Available Contexts:
+   * * full - Returns both a description (if available) and an "Add to Cart" button
+   * * button - Returns an "Add to Cart" button.
+   * * description - Returns the Items description if available.
+   * * cart - Used to add a row to the Cart
+   *
+   * @param $itemValues
+   * @param string $context
+   * @return string
+   */
+  public static function renderItemContent($itemValues, $context = "full") {
     //Create a template object
     $template = CRM_Core_Smarty::singleton();
 
@@ -183,11 +199,7 @@ class CRM_Civicart_Tokens {
     $templateFile = "CRM/Civicart/Widget/{$contextName}.tpl";
 
     //Hook to alter the template widget name
-    CRM_Civicart_Hooks::tokenTemplateHook($itemValues, $type, $templateFile);
-
-    //Allow other extensions to load additional data into the item
-    //Such as Quantity and Description.
-    CRM_Civicart_Hooks::inventoryHook($itemValues, $context);
+    CRM_Civicart_Hooks::tokenTemplateHook($itemValues, $context, $templateFile);
 
     //Assign data to the template
     foreach($itemValues as $key => $value) {
