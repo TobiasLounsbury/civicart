@@ -16,8 +16,8 @@ class CRM_Civicart_Form_Settings extends CRM_Core_Form {
    * @var array
    */
   protected $_settings = array();
-  protected $_priceSets = array();
   protected $_settingsMetadata = array();
+  protected $_pages = array();
 
   function preProcess() {
     parent::preProcess();
@@ -37,26 +37,16 @@ class CRM_Civicart_Form_Settings extends CRM_Core_Form {
     $this->settingsFields = include("settings/civicart.setting.php");
 
 
-    $result = civicrm_api3('PriceSet', 'get', array(
-      'return' => array("title", "id"),
-      //In my tests there are price-sets that have no domain.
-      // I'm not sure if this is because I am on a single site instance,
-      // or if there is data corruption on my development site,
-      // or if price-sets are never really for a specific domain (least likely imo)
-      // For now I'm going to leave this commented out and re-address it when needed.
-      //todo: This should be properly addressed on a multisite system and appropriate logic added
-      //'domain_id' => $currentDomainId,
-      'options' => array('limit' => 0),
-      'extends' => "CiviContribute",
-      'is_reserved' => 0,
-      'is_active' => 1,
+
+    $result = civicrm_api3('ContributionPage', 'get', array(
+      'return' => array("id", "title"),
     ));
 
 
-    $this->_priceSets = array();
+    $this->_pages = array();
 
-    foreach($result['values'] as $priceSet) {
-      $this->_priceSets[$priceSet['id']] = $priceSet['title'];
+    foreach($result['values'] as $page) {
+      $this->_pages[$page['id']] = $page['title'];
     }
 
   }
@@ -64,17 +54,18 @@ class CRM_Civicart_Form_Settings extends CRM_Core_Form {
 
   function buildQuickForm() {
 
+
     // add form elements
     $this->add(
       'select', // field type
-      'civicart_priceset', // field name
-      ts('Inventory Price-Set'), // field label
-      $this->_priceSets, // list of options
+      'civicart_contribution_page', // field name
+      ts('Contribution Page'), // field label
+      $this->_pages, // list of options
       true // is required
     );
 
-    $manualFields = array("civicart_priceset");
-    $groups = array(ts("CiviCart Settings") => array("civicart_priceset"));
+    $manualFields = array("civicart_contribution_page");
+    $groups = array(ts("CiviCart Settings") => array("civicart_contribution_page"));
     $helpText = array();
 
     foreach($this->settingsFields as $field => $info) {

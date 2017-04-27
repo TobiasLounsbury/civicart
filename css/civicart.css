@@ -1,0 +1,41 @@
+.civicart-no-items {
+  text-align: center;
+}
+
+.civicart-no-thumbnail {
+  max-height: 50px;
+  width: 50px;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.civicart-thumbnail {
+  border: 1px solid black;
+  max-height: 50px;
+  max-width: 50px;
+  margin-right: 10px;
+}
+
+.civicart-cart-contents tr th:first-of-type {
+  text-align: left;
+  padding-left: 70px;
+}
+
+.civicart-cart-contents tr th {
+  text-align: center;
+}
+
+
+.civicart-cart-contents tr td:first-of-type {
+  max-width: 55px;
+  text-align: left;
+}
+
+.civicart-cart-contents tr td {
+  text-align: center;
+}
+
+.civicart-checkout #priceset-div,
+.CRM_Civicart_Form_Checkout #priceset-div {
+  display: none;
+}

@@ -1,7 +1,7 @@
 <?php
 
 
-class CRM_Civicart_Tokens {
+class CRM_Civicart_Items {
 
   /**
    * Looks up all the items we have available to add to the cart
@@ -13,50 +13,56 @@ class CRM_Civicart_Tokens {
   public static function getAllItems() {
 
     //Lookup the setting for which price set we are to use
-    $priceSetId = civicrm_api3('Setting', 'getvalue', array(
-      'return' => "civicart_priceset",
-      'name' => "civicart_priceset",
+    $pageId = civicrm_api3('Setting', 'getvalue', array(
+      'return' => "civicart_contribution_page",
+      'name' => "civicart_contribution_page",
     ));
 
 
-
-    //Get the list of items available to the cart
-    $result = civicrm_api3('PriceField', 'get', array(
-      'return' => array("id", "label", "name", "html_type"),
-      'price_set_id' => $priceSetId,
-      'is_active' => 1,
-      'options' => array('limit' => 0),
-      'api.PriceFieldValue.get' => array(
-        'is_active' => 1,
-        'return' => array("id", "name", "label"),
-        'options' => array('limit' => 0),
-      ),
-    ));
+    $priceSetId = CRM_Price_BAO_PriceSet::getFor('civicrm_contribution_page', $pageId);
 
     $priceFields = array();
 
-    //Do some normalization of the price field so other extensions can modify the data.
-    foreach($result['values'] as $priceField) {
+    if($priceSetId) {
 
-      $priceFields[$priceField['id']] = array(
-        "id" => $priceField['id'],
-        "name" => $priceField['name'],
-        "label" => $priceField['label'],
-        "html_type" => $priceField['html_type'],
-        "options" => array()
-      );
+      //Get the list of items available to the cart
+      $result = civicrm_api3('PriceField', 'get', array(
+        'return' => array("id", "label", "name", "html_type"),
+        'price_set_id' => $priceSetId,
+        'is_active' => 1,
+        'options' => array('limit' => 0),
+        'api.PriceFieldValue.get' => array(
+          'is_active' => 1,
+          'return' => array("id", "name", "label"),
+          'options' => array('limit' => 0),
+        ),
+      ));
 
-      if($priceField['html_type'] == "CheckBox") {
-        foreach ($priceField['api.PriceFieldValue.get'] as $value) {
-          $priceFields[$priceField['id']]['options'][$value['id']] = array(
-            "id" => $value['id'],
-            "name" => $value['name'],
-            "label" => $value['label']
-          );
+
+      //Do some normalization of the price field so other extensions can modify the data.
+      foreach ($result['values'] as $priceField) {
+
+        $priceFields[$priceField['id']] = array(
+          "id" => $priceField['id'],
+          "name" => $priceField['name'],
+          "label" => $priceField['label'],
+          "html_type" => $priceField['html_type'],
+          "options" => array()
+        );
+
+        if ($priceField['html_type'] == "CheckBox") {
+          foreach ($priceField['api.PriceFieldValue.get']['values'] as $value) {
+            $priceFields[$priceField['id']]['options'][$value['id']] = array(
+              "id" => $value['id'],
+              "name" => $value['name'],
+              "label" => $value['label']
+            );
+          }
         }
       }
-    }
 
+
+    }
 
     //Allow other extensions to alter the list of items
     CRM_Civicart_Hooks::tokenListHook($priceFields);
@@ -74,11 +80,11 @@ class CRM_Civicart_Tokens {
    *   And will for checkboxes render all of the options with a single add to cart button.
    * * option - Used to add a single checkbox option out of the list.
    *
-   * @param $itemId
-   * @param string $type
-   * @return string
+   * @param Int $itemId
+   * @param Int|Boolean $option
+   * @return array|Boolean
    */
-  public static function getItemData($itemId, $type = "item") {
+  public static function getItemData($itemId, $option = false) {
     //Lookup the setting for which price set we are to use
     $priceSetId = civicrm_api3('Setting', 'getvalue', array(
       'return' => "civicart_priceset",
@@ -89,7 +95,7 @@ class CRM_Civicart_Tokens {
 
 
     //We are working with an Item
-    if ($type == "item") {
+    if (!$option) {
       //Get the PriceField
       try {
         //Fetch the PriceField
@@ -110,10 +116,10 @@ class CRM_Civicart_Tokens {
         if ($priceField['price_set_id'] != $priceSetId ||
           $priceField['is_active'] == 0
         ) {
-          return "";
+          return false;
         }
       } catch (Exception $e) {
-        return "";
+        return false;
       }
 
       $itemValues['id'] = $priceField['id'];
@@ -134,16 +140,17 @@ class CRM_Civicart_Tokens {
       $itemValues['type'] = "item";
 
 
-    } elseif ($type == "option") {
+    } elseif (is_numeric($option)) {
 
       //Get the PriceFieldValue
       try {
         $priceFieldValue = civicrm_api3('PriceFieldValue', 'getsingle', array(
-          'id' => $itemId,
+          'id' => $option,
+          'price_field_id' => $itemId,
           'api.PriceField.getsingle' => array(),
         ));
       } catch (Exception $e) {
-        return "";
+        return false;
       }
 
       //Return an empty string if this item isn't enable, or isn't part of our priceset
@@ -151,11 +158,12 @@ class CRM_Civicart_Tokens {
         $priceFieldValue['is_active'] == 0 ||
         $priceFieldValue['api.PriceField.getsingle']['is_active'] == 0
       ) {
-        return "";
+        return false;
       }
 
       //Do some normalization
-      $itemValues['id'] = $priceFieldValue['id'];
+      $itemValues['id'] = $priceFieldValue['price_field_id'];
+      $itemValues['option'] = $priceFieldValue['id'];
       $itemValues['label'] = $priceFieldValue['label'];
       $itemValues['name'] = $priceFieldValue['name'];
       $itemValues['amount'] = $priceFieldValue['amount'];
@@ -166,12 +174,12 @@ class CRM_Civicart_Tokens {
     } else {
       //todo: Should we do something with a hook here that would allow other
       //todo: Extensions to provide their own types?
-      return "";
+      return false;
     }
 
     //Allow other extensions to load additional data into the item
     //Such as Quantity and Description.
-    CRM_Civicart_Hooks::inventoryHook($itemValues, $type);
+    CRM_Civicart_Hooks::inventoryHook($itemValues);
 
     return $itemValues;
   }
@@ -200,6 +208,8 @@ class CRM_Civicart_Tokens {
 
     //Hook to alter the template widget name
     CRM_Civicart_Hooks::tokenTemplateHook($itemValues, $context, $templateFile);
+
+    $itemValues['isQty'] = ($itemValues['html_type'] == "Text");
 
     //Assign data to the template
     foreach($itemValues as $key => $value) {

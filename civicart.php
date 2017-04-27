@@ -192,32 +192,66 @@ function _civicart_getMenuKeyMax($menuArray) {
 
 
 /**
- * Implementation of hook_civicrm_tokens
+ * Implementation of hook_civicrm_alterTemplateFile
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_alterTemplateFile
  *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_tokens
+ * Used to change which template file is loaded for the checkout page.
  *
- *  Adds the shopping cart tokens to the list of available tokens.
- *
- * @param $tokens
+ * @param $formName
+ * @param $form
+ * @param $context
+ * @param $tplName
  */
-function civicart_civicrm_tokens( &$tokens ) {
-  $tokens['cart'] = CRM_Civicart_Tokens::getCartTokens();
+function civicart_civicrm_alterTemplateFile($formName, &$form, $context, &$tplName) {
+  if($formName == "CRM_Contribute_Form_Contribution_Main") {
+    $formId = $form->getVar("_id");
+
+    //Fetch the form ID
+    $checkoutId = civicrm_api3('Setting', 'getvalue', array(
+      'return' => "civicart_contribution_page",
+      'name' => "civicart_contribution_page",
+    ));
+
+    if ($formId == $checkoutId) {
+      $tplName = "CRM/Civicart/Form/Checkout.tpl";
+    }
+  }
 }
 
 
 /**
- * Implementation of hook_civicrm_tokenValues
+ * Implementation of hook_civicrm_buildForm
  *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_tokenValues
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_buildForm
  *
- * Used to replace a token with a cart item's html either a button or a description
+ * Add Cart Settings link to the Administer->CiviContribute menu.
  *
- * @param $values
- * @param $cids
- * @param null $job
- * @param array $tokens
- * @param null $context
+ * @param $formName
+ * @param $form
  */
-function civicart_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = array(), $context = null) {
+function civicart_civicrm_buildForm($formName, &$form) {
 
+  $types = array(
+    "CRM_Contribute_Form_Contribution_Main",
+    "CRM_Contribute_Form_Contribution_Confirm",
+  );
+
+  if(in_array($formName, $types)) {
+    $formId = $form->getVar("_id");
+
+    //Fetch the form ID
+    $checkoutId = civicrm_api3('Setting', 'getvalue', array(
+      'return' => "civicart_contribution_page",
+      'name' => "civicart_contribution_page",
+    ));
+
+    if ($formId == $checkoutId) {
+      if($formName == "CRM_Contribute_Form_Contribution_Main") {
+        CRM_Civicart_Checkout::buildForm($form);
+      } else if ($formName == "CRM_Contribute_Form_Contribution_Confirm") {
+        CRM_Civicart_Checkout::buildConfirm($form);
+      }
+    }
+  }
 }
+

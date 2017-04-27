@@ -41,17 +41,16 @@ class CRM_Civicart_Hooks {
    * to indicate how many of this item are available.
    *
    * @param $item
-   * @param $type
    * @return mixed
    */
-  public static function inventoryHook(&$item, $type) {
+  public static function inventoryHook(&$item) {
 
     $item['quantity'] = CRM_Utils_Array::value("quantity", $item, false);
     $item['description'] = CRM_Utils_Array::value("description", $item, false);
     $item['image'] = CRM_Utils_Array::value("image", $item, false);
 
-    return CRM_Utils_Hook::singleton()->invoke(2, $item, $type,
-      self::$_nullObject, self::$_nullObject, self::$_nullObject, self::$_nullObject,
+    return CRM_Utils_Hook::singleton()->invoke(1, $item,
+      self::$_nullObject, self::$_nullObject, self::$_nullObject, self::$_nullObject, self::$_nullObject,
       'civicart_getItemInventory'
     );
   }
