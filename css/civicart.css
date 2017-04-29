@@ -1,3 +1,5 @@
+
+/*****  [ Cart Rules ]  *****/
 .civicart-no-items {
   text-align: center;
 }
@@ -35,7 +37,46 @@
   text-align: center;
 }
 
+
+/*****  [ Checkout Rules ]  *****/
+
 .civicart-checkout #priceset-div,
 .CRM_Civicart_Form_Checkout #priceset-div {
   display: none;
 }
+
+
+
+
+/*****  [ Popup Rules ]  *****/
+
+.civicart-popup-wrapper {
+  position: fixed;
+  top: 100px;
+  left: 25%;
+  width: 50%;
+  z-index: 1000;
+}
+
+.civicart-popup {
+  padding: 15px 30px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.8);
+  color: #000;
+  margin-bottom: 15px;
+}
+
+
+.civicart-popup-error {
+  border-color: #a00;
+  color: #700;
+  background: rgba(255, 200, 200, 0.8);
+}
+
+.civicart-popup-success {
+  border-color: #070;
+  color: #040;
+  background: rgba(200, 255, 255, 0.8);
+}
+
