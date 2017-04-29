@@ -234,9 +234,23 @@ class CRM_Civicart_Utils {
 
     if(!$CiviCartLibraryIncluded) {
 
-      $resources = CRM_Core_Resources::singleton();
-      $resources->addScriptFile("com.tobiaslounsbury.civicart", "js/civicart.library.js");
-      $resources->addStyleFile("com.tobiaslounsbury.civicart", "css/civicart.css");
+      $manager = CRM_Core_Resources::singleton();
+      $resources = self::getLibraryResources();
+
+      //Add JavaScript Files
+      foreach($resources['js'] as $item) {
+        $manager->addScriptUrl($item);
+      }
+
+      //Add Stylesheets
+      foreach($resources['css'] as $item) {
+        $manager->addStyleUrl($item);
+      }
+
+      //Add Inline JavaScript
+      foreach($resources['inline'] as $item) {
+        $manager->addScript($item);
+      }
 
       $CiviCartLibraryIncluded = true;
     }
@@ -251,10 +265,13 @@ class CRM_Civicart_Utils {
   public static function getLibraryResources() {
 
     $resourceManager = CRM_Core_Resources::singleton();
-    $resources = array("js" => array(), "css" => array());
+    $resources = array("js" => array(), "css" => array(), "inline" => array());
 
     $resources['js'][] = $resourceManager->getUrl("com.tobiaslounsbury.civicart", "js/civicart.library.js");
     $resources['css'][] = $resourceManager->getUrl("com.tobiaslounsbury.civicart", "css/civicart.css");
+
+    $url = CRM_Utils_System::url("civicrm/cart");
+    $resources['inline'][] = "var CiviCart = CiviCart || {}; CiviCart.addUrl = '{$url}';";
 
     return $resources;
   }
