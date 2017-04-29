@@ -167,9 +167,9 @@ class CRM_Civicart_Items {
       $itemValues['label'] = $priceFieldValue['label'];
       $itemValues['name'] = $priceFieldValue['name'];
       $itemValues['amount'] = $priceFieldValue['amount'];
-      $itemValues['html_type'] = 'option';
+      $itemValues['html_type'] = 'Option';
       $itemValues['is_display_amounts'] = $priceFieldValue['api.PriceField.getsingle']['is_display_amounts'];
-      $itemValues['type'] = "option";
+      $itemValues['type'] = "Option";
 
     } else {
       //todo: Should we do something with a hook here that would allow other
@@ -199,6 +199,7 @@ class CRM_Civicart_Items {
    * @return string
    */
   public static function renderItemContent($itemValues, $context = "full") {
+    global $civicartAddButtonText;
     //Create a template object
     $template = CRM_Core_Smarty::singleton();
 
@@ -211,6 +212,14 @@ class CRM_Civicart_Items {
 
     $itemValues['isQty'] = ($itemValues['html_type'] == "Text");
 
+    $itemValues['formattedAmount'] = CRM_Utils_Money::format($itemValues['amount']);
+
+    if(!empty($itemValues['options'])) {
+      foreach($itemValues['options'] as &$option) {
+        $option['formattedAmount'] = CRM_Utils_Money::format($option['amount']);
+      }
+    }
+
     //Assign data to the template
     foreach($itemValues as $key => $value) {
       $template->assign($key, $value);
@@ -218,11 +227,13 @@ class CRM_Civicart_Items {
 
     //Assign the button text if it is needed
     if($context == "full" || $context == "button") {
-      $buttonText = civicrm_api3('Setting', 'getvalue', array(
-        'return' => "civicart_add_button_text",
-        'name' => "civicart_add_button_text",
-      ));
-      $template->assign("buttonText", $buttonText);
+      if(!$civicartAddButtonText) {
+        $civicartAddButtonText = civicrm_api3('Setting', 'getvalue', array(
+          'return' => "civicart_add_button_text",
+          'name' => "civicart_add_button_text",
+        ));
+      }
+      $template->assign("buttonText", $civicartAddButtonText);
     }
 
     //Render the Template
