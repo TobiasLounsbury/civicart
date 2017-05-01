@@ -192,6 +192,24 @@ function _civicart_getMenuKeyMax($menuArray) {
 
 
 /**
+ * Implements hook_civicrm_permission().
+ *
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_permission
+ *
+ * @param $permissions
+ */
+function civicart_civicrm_permission(&$permissions) {
+
+  $prefix = ts('CiviCart') . ': ';
+
+  $permissions['access CiviCart'] = array(
+    $prefix . ts('access CiviCart'),                     // label
+    ts('allow access to use the CiviCart shopping Cart.'),  // description
+  );
+}
+
+
+/**
  * Implementation of hook_civicrm_alterTemplateFile
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_alterTemplateFile
  *
