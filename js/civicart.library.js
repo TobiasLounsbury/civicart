@@ -1,11 +1,15 @@
-if (!window.civicart) {
-  window.civicart = {};
-}
+var CiviCart = CiviCart || {};
 
 if(window.CRM && CRM.$) {
-  civicart.$ = CRM.$;
+  CiviCart.$ = CRM.$;
 } else {
-  civicart.$ = jQuery;
+  CiviCart.$ = jQuery;
+}
+
+if(window.CRM && CRM.ts) {
+  CiviCart.ts = CRM.ts;
+} else {
+  CiviCart.ts = function(text) {return text;};
 }
 
 (function($) {
@@ -14,13 +18,134 @@ if(window.CRM && CRM.$) {
    * Add an item to the cart.
    *
    * @param type
-   * @param item
-   * @param qtySelector
+   * @param id
+   * @param selector
    */
-  civicart.addToCart = function addToCart(type, item, qtySelector) {
-    console.log("Add to Cart");
-    var qty = $(qtySelector).val() || 1;
-    console.log("todo: post to civicrm/cart");
+  CiviCart.addToCart = function addToCart(type, id, selector) {
+
+    var params = {action: "add", "id": id, quantity: 1, "type": type};
+
+    switch(type) {
+
+      case "Text":
+        params.quantity = $(selector).val();
+        if(!params.quantity || parseInt(params.quantity) < 1 || isNaN(parseInt(params.quantity))) {
+          CiviCart.message( CiviCart.ts("Invalid Quantity Selected"), CiviCart.ts("Error"), "error" );
+          return;
+        }
+        break;
+
+      case "Select":
+        if(!$(selector).val()) {
+          CiviCart.message( CiviCart.ts("No Option Selected"), CiviCart.ts("Invalid Selection"), "error" );
+          return;
+        }
+        params.option = $(selector).val();
+        break;
+
+      case "Option":
+        params.option = selector;
+        break;
+
+      case "Radio":
+        if($("input[name='" + selector + "']:checked").length == 0) {
+          CiviCart.message( CiviCart.ts("You must select an option before adding to cart."), CiviCart.ts("Error"), "error" );
+          return;
+        }
+        params.option = $("input[name='" + selector + "']:checked").val();
+        break;
+
+      case "CheckBox":
+        params.option = [];
+        $("input[name='" + selector + "']:checked").each(function(index, object) {
+          params.option.push($(object).val());
+        });
+        if(params.option.length == 0) {
+          CiviCart.message( CiviCart.ts("No Options Selected"), CiviCart.ts("Error"), "error" );
+          return;
+        }
+        break;
+    }
+
+    CiviCart.postAddData(params);
+  };
+
+
+  // Helper flag to mark when we've added the popup template.
+  CiviCart.popupAdded = false;
+
+
+  /**
+   * Shows a popup message
+   *
+   * @param msg
+   * @param title
+   * @param type
+   * @param options
+   */
+  CiviCart.message = function(msg, title, type, options) {
+
+    if(window.CRM && CRM.alert) {
+      CRM.alert(msg, title, type, options);
+    } else {
+
+      options = options || {};
+      type = type || "success";
+
+      if (!CiviCart.popupAdded) {
+        CiviCart.addPopupTemplate();
+      }
+
+      //create the popup object
+      var obj = $("<div class='civicart-popup civicart-popup-" + type + "'></div>");
+      if (type) {
+        msg = "<strong>" + title + ": </strong>" + msg;
+      }
+
+      //Set the message
+      obj.html(msg);
+
+      //Show the popup
+      $("#civicart-popup-wrapper").append(obj);
+
+      //set a timeout to hide the message
+      CiviCart.temporaryMessage(obj);
+
+      //Close the message when it is clicked.
+      obj.click(function() {
+        //Do some animation to hide the error message first
+        obj.slideUp( "fast", function() {
+          // Animation complete, now remove from the DOM
+          obj.remove();
+        });
+      });
+    }
+  };
+
+
+  /**
+   * Set a timeout to destroy the message after
+   * a fixed amount of time.
+   *
+   * @param obj
+   */
+  CiviCart.temporaryMessage = function(obj) {
+    setTimeout(function() {
+      //Do some animation to hide the error message first
+      obj.slideUp( "fast", function() {
+        // Animation complete, now remove from the DOM
+        obj.remove();
+      });
+    }, 10000);
+  };
+
+
+  /**
+   * Function adds a wrapper to the body for showing popup messages
+   */
+  CiviCart.addPopupTemplate = function() {
+    $("body").append("<div id='civicart-popup-wrapper' class='civicart-popup-wrapper'></div>");
+    CiviCart.popupAdded = true;
   };
 
 
@@ -31,10 +156,10 @@ if(window.CRM && CRM.$) {
    *
    * @param itemCount
    */
-  civicart.updateCartNumber = function updateCartNumber(itemCount) {
+  CiviCart.updateCartNumber = function updateCartNumber(itemCount) {
     $(".civicart-cart-item-count").text(itemCount);
   };
 
-})(civicart.$);
+})(CiviCart.$);
 
 
