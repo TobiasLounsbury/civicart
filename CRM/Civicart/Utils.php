@@ -174,7 +174,8 @@ class CRM_Civicart_Utils {
     if($contents && is_array($contents)) {
       $items = 0;
       foreach($contents as $item) {
-        $items = $items + (array_key_exists("quantity", $item) && is_numeric($item['quantity'])) ? $item['quantity'] : 1;
+        $new = (array_key_exists("quantity", $item) && is_numeric($item['quantity'])) ? $item['quantity'] : 1;
+        $items = $items + $new;
       }
       return $items;
     }
