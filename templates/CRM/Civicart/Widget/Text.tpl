@@ -1,1 +1,1 @@
-<input size="1" name="civicart_{$name}" id="civicart_{$name}" data-quantity="{$quantity}" value="1" /> - <a href="javascript:civicart.addToCart('{$type}', {$id}, '#civicart_{$name}')" class="civicart-add-button btn btn-primary button crm-button">{$buttonText}</a>
+<input size="1" name="civicart_{$name}" id="civicart_{$name}" data-quantity="{$quantity}" value="1" /> x {$formattedAmount} - <a href="javascript:CiviCart.addToCart('Text', {$id}, '#civicart_{$name}')" class="civicart-add-button btn btn-primary button crm-button">{$buttonText}</a>

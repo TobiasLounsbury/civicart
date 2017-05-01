@@ -1,1 +1,1 @@
-Option
+<a href="javascript:CiviCart.addToCart('Option', {$id}, {$option})" class="civicart-add-button btn btn-primary button crm-button">{$buttonText}</a>
