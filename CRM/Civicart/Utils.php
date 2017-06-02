@@ -278,4 +278,20 @@ class CRM_Civicart_Utils {
   }
 
 
+  /**
+   * Helper function to fetch the price-set-id for the
+   * contribution page selected for checkout.
+   *
+   * @return false|int
+   */
+  public static function getCartPriceSet() {
+    //Lookup the setting for which price set we are to use
+    $pageId = civicrm_api3('Setting', 'getvalue', array(
+      'return' => "civicart_contribution_page",
+      'name' => "civicart_contribution_page",
+    ));
+
+    return  CRM_Price_BAO_PriceSet::getFor('civicrm_contribution_page', $pageId);
+  }
+
 }

@@ -12,15 +12,7 @@ class CRM_Civicart_Items {
    */
   public static function getAllItems() {
 
-    //Lookup the setting for which price set we are to use
-    $pageId = civicrm_api3('Setting', 'getvalue', array(
-      'return' => "civicart_contribution_page",
-      'name' => "civicart_contribution_page",
-    ));
-
-
-    $priceSetId = CRM_Price_BAO_PriceSet::getFor('civicrm_contribution_page', $pageId);
-
+    $priceSetId = CRM_Civicart_Utils::getCartPriceSet();
     $priceFields = array();
 
     if($priceSetId) {
@@ -86,10 +78,7 @@ class CRM_Civicart_Items {
    */
   public static function getItemData($itemId, $option = false) {
     //Lookup the setting for which price set we are to use
-    $priceSetId = civicrm_api3('Setting', 'getvalue', array(
-      'return' => "civicart_priceset",
-      'name' => "civicart_priceset",
-    ));
+    $priceSetId = CRM_Civicart_Utils::getCartPriceSet();
 
     $itemValues = array();
 
@@ -113,12 +102,11 @@ class CRM_Civicart_Items {
           ),
         ));
 
-        if ($priceField['price_set_id'] != $priceSetId ||
-          $priceField['is_active'] == 0
-        ) {
+        if ($priceField['price_set_id'] != $priceSetId || $priceField['is_active'] == 0) {
           return false;
         }
       } catch (Exception $e) {
+        error_log($e->getMessage());
         return false;
       }
 
