@@ -33,6 +33,27 @@ if(window.CRM && CRM.ts) {
           CiviCart.message( CiviCart.ts("Invalid Quantity Selected"), CiviCart.ts("Error"), "error" );
           return;
         }
+
+        var data = $(selector).data();
+
+        //Check if sold out
+        if(parseInt(data.quantity) === 0) {
+          CiviCart.message( CiviCart.ts("This item is sold out"), CiviCart.ts("Error"), "error" );
+          return;
+        }
+
+        //Check sale limit
+        if(parseInt(data.limit) < parseInt(params.quantity)) {
+          CiviCart.message( CiviCart.ts("This item is limited to a quantity of ") + data.limit, CiviCart.ts("Error"), "error" );
+          return;
+        }
+
+        //Check Quantity on hand
+        if(parseInt(data.quantity) < parseInt(params.quantity)) {
+          CiviCart.message( CiviCart.ts("I'm sorry, we only have " + data.quantity + " of this item available"), CiviCart.ts("Error"), "error" );
+          return;
+        }
+
         break;
 
       case "Select":
