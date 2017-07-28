@@ -273,3 +273,34 @@ function civicart_civicrm_buildForm($formName, &$form) {
   }
 }
 
+
+/**
+ * Implementation of hook_civicrm_postProcess
+ *
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_postProcess
+ *
+ * Empties the cart when the contribution page configured as the "cart"
+ * is processed.
+ *
+ * @param $formName
+ * @param $form
+ */
+function civicart_civicrm_postProcess($formName, &$form) {
+  //todo: Check to see if the checkout page is configured to use a
+  //confirmation page, and if not, clear the cart when the Main
+  //form is processed
+
+  if($formName == "CRM_Contribute_Form_Contribution_Confirm") {
+    $formId = $form->getVar("_id");
+
+    //Fetch the form ID
+    $checkoutId = civicrm_api3('Setting', 'getvalue', array(
+      'return' => "civicart_contribution_page",
+      'name' => "civicart_contribution_page",
+    ));
+
+    if ($formId == $checkoutId) {
+      CRM_Civicart_Utils::emptyCart();
+    }
+  }
+}
